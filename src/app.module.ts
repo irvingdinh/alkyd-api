@@ -1,3 +1,8 @@
+import {
+  CacheModule,
+  CacheModuleAsyncOptions,
+  CacheModuleOptions,
+} from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import {
   ConfigModule,
@@ -20,6 +25,18 @@ import {
   CollectionEntity,
   WallpaperEntity,
 } from './wallpapers/wallpapers.entity';
+import { WallpapersModule } from './wallpapers/wallpapers.module';
+
+const cacheModuleOptions: CacheModuleAsyncOptions = {
+  isGlobal: true,
+  imports: [ConfigModule],
+  useFactory: (): CacheModuleOptions => {
+    return {
+      //
+    };
+  },
+  inject: [ConfigService],
+};
 
 const configModuleOptions: ConfigModuleOptions = {
   isGlobal: true,
@@ -52,11 +69,13 @@ const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
 
 @Module({
   imports: [
+    CacheModule.registerAsync(cacheModuleOptions),
     ConfigModule.forRoot(configModuleOptions),
     LoggerModule.forRoot({}),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     CoreModule,
     NovaModule,
+    WallpapersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

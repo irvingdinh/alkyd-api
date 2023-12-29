@@ -1,13 +1,10 @@
 import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { Repository } from 'typeorm';
 
 import { ImagesService } from '../../core/external/images.service';
 import { StorageService } from '../../core/external/storage.service';
-import { CollectionEntity } from '../../wallpapers/wallpapers.entity';
 import { NovaService } from '../nova.service';
 
 @Controller('/api/v1/nova/images')

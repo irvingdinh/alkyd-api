@@ -39,13 +39,18 @@ export class WallpapersController {
 
   @Post('/find')
   async find(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const records = await this.novaService.handleFindEndpoint({
+    const entities = await this.novaService.handleFindEndpoint({
       req,
       res,
       repository: this.wallpaperRepository,
     });
-    if (records === null) {
+    if (entities === null) {
       return;
+    }
+
+    const records: any[] = [];
+    for (const entity of entities) {
+      records.push(await this.novaService.serializeWallpaperEntity(entity));
     }
 
     res.status(HttpStatus.OK).json(records);

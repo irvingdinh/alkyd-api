@@ -5,7 +5,6 @@ import {
   Index,
   ObjectId,
   ObjectIdColumn,
-  OneToOne,
   UpdateDateColumn,
 } from 'typeorm';
 

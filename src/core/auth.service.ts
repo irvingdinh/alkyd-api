@@ -30,7 +30,7 @@ export class AuthService {
   ): Promise<DecodedIdToken> {
     const records = [
       {
-        uid: '6MC4CVOlszXPjZAy7ME3LpLil6B2',
+        uid: 'RQZAbikfD2bmvhhRvKh5wlwk9z32',
         accessToken:
           '$2b$10$A4I7ZM0Y7i.6MTg4B7zc5uozW0y8cjdshSz59A1VxPexYD/ViV4C.',
       },
@@ -39,7 +39,7 @@ export class AuthService {
     for (const { uid, accessToken } of records) {
       try {
         if (await bcrypt.compare(token, accessToken)) {
-          // @ts-expect-error
+          // @ts-expect-error "Expected no metadata via Access Token."
           return { uid };
         }
       } catch (error) {

@@ -1,4 +1,12 @@
-import { Controller, HttpStatus, Post, Put, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import Joi from 'joi';
@@ -33,6 +41,27 @@ export class CollectionsController {
     });
     if (collection === null) {
       return;
+    }
+
+    res
+      .status(HttpStatus.OK)
+      .json(this.novaService.serializeCollectionEntity(collection));
+  }
+
+  @Get('/:id')
+  async detail(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const userId = await this.novaService.authorize(req, res);
+    if (typeof userId !== 'string') {
+      return null;
+    }
+
+    const collection = await this.novaService.firstOrFail({
+      req,
+      res,
+      repository: this.collectionRepository,
+    });
+    if (collection === null) {
+      return null;
     }
 
     res

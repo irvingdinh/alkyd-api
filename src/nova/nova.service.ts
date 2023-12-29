@@ -7,17 +7,22 @@ import { Repository } from 'typeorm';
 
 import { AuthService } from '../core/auth.service';
 import { ImagesService } from '../core/external/images.service';
-import { CollectionEntity } from '../wallpapers/wallpapers.entity';
+import { StorageService } from '../core/external/storage.service';
+import {
+  CollectionEntity,
+  WallpaperEntity,
+} from '../wallpapers/wallpapers.entity';
 
 @Injectable()
 export class NovaService {
-  private whitelistIds: string[] = ['6MC4CVOlszXPjZAy7ME3LpLil6B2'];
+  private whitelistIds: string[] = ['RQZAbikfD2bmvhhRvKh5wlwk9z32'];
 
   constructor(
     @InjectPinoLogger(NovaService.name)
     private readonly log: PinoLogger,
     private readonly authService: AuthService,
     private readonly imagesService: ImagesService,
+    private readonly storageService: StorageService,
   ) {}
 
   async authorize(req: Request, res: Response): Promise<string> {
@@ -195,6 +200,7 @@ export class NovaService {
 
     let record: T;
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       record = await repository.findOne(objectId);
     } catch (error) {
@@ -226,6 +232,19 @@ export class NovaService {
       isPublished: collection.isPublished,
       createdAt: collection.createdAt,
       updatedAt: collection.updatedAt,
+    };
+  }
+
+  async serializeWallpaperEntity(wallpaper: WallpaperEntity): Promise<any> {
+    return {
+      id: wallpaper.id.toHexString(),
+      collectionId: wallpaper.collectionId,
+      objectKey: wallpaper.objectKey,
+      objectUrl: await this.storageService.getSignedUrl(wallpaper.objectKey),
+      imageKey: wallpaper.imageKey,
+      imageUrl: this.imagesService.getUrl(wallpaper.imageKey, 'public'),
+      createdAt: wallpaper.createdAt,
+      updatedAt: wallpaper.updatedAt,
     };
   }
 }
