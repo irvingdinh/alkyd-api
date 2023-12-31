@@ -35,8 +35,11 @@ export class GenerateWallpaperScheduler {
     private readonly replicateService: ReplicateService,
     private readonly storageService: StorageService,
   ) {
-    this.schedulerEnabled = this.configService.get('SCHEDULER_ENABLED', false);
-    this.schedulerEnabled = this.configService.get(
+    this.schedulerEnabled = this.configService.get<boolean>(
+      'SCHEDULER_ENABLED',
+      false,
+    );
+    this.schedulerGenerateWallpaperEnabled = this.configService.get<boolean>(
       'SCHEDULER_GENERATE_WALLPAPER_ENABLED',
       false,
     );
@@ -45,7 +48,7 @@ export class GenerateWallpaperScheduler {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async generateWallpaperCron(): Promise<void> {
     if (!this.schedulerEnabled || !this.schedulerGenerateWallpaperEnabled) {
-      this.log.warn(
+      this.log.info(
         'GenerateWallpaperScheduler is ignored due to feature flag',
       );
       return;
