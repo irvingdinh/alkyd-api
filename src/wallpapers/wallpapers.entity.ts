@@ -55,6 +55,8 @@ class WallpaperInput {
 
 @Entity('wallpapers')
 export class WallpaperEntity {
+  _id: ObjectId;
+
   @ObjectIdColumn()
   id: ObjectId;
 

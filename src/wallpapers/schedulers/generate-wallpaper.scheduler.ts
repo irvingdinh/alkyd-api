@@ -42,9 +42,12 @@ export class GenerateWallpaperScheduler {
     );
   }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async generateWallpaperCron(): Promise<void> {
     if (!this.schedulerEnabled || !this.schedulerGenerateWallpaperEnabled) {
+      this.log.warn(
+        'GenerateWallpaperScheduler is ignored due to feature flag',
+      );
       return;
     }
 

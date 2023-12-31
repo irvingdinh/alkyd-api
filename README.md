@@ -141,5 +141,5 @@ input: {
     imageKey: 'FAKE_IMAGE_KEY',
 })
 
-await get(GenerateWallpaperScheduler).generateWallpaper()
+await get(GenerateWallpaperScheduler).process()
 ```

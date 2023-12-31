@@ -127,7 +127,7 @@ interface CollectionJson {
   wallpapers?: WallpaperJson[];
 }
 
-interface WallpaperJson {
+export interface WallpaperJson {
   id: string;
   image: string;
 }
