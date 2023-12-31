@@ -45,7 +45,7 @@ export class GenerateWallpaperScheduler {
     );
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async generateWallpaperCron(): Promise<void> {
     if (!this.schedulerEnabled || !this.schedulerGenerateWallpaperEnabled) {
       this.log.info(
@@ -359,9 +359,9 @@ export class GenerateWallpaperScheduler {
 
     const schema = Joi.object({
       prompt: Joi.string().required(),
-      styles: Joi.array().items(Joi.string()).required(),
-      tags: Joi.array().items(Joi.string()).required(),
-      colors: Joi.array().items(Joi.string()).required(),
+      styles: Joi.array().items(Joi.string()).optional(),
+      tags: Joi.array().items(Joi.string()).optional(),
+      colors: Joi.array().items(Joi.string()).optional(),
     });
 
     const { value, error } = schema.validate(content);
@@ -382,7 +382,7 @@ export class GenerateWallpaperScheduler {
 
 interface ContentJson {
   prompt: string;
-  styles: string[];
-  tags: string[];
-  colors: string[];
+  styles?: string[];
+  tags?: string[];
+  colors?: string[];
 }

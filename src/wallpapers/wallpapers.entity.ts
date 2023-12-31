@@ -42,15 +42,15 @@ class WallpaperInput {
 
   @Column()
   @Index()
-  styles: string[];
+  styles?: string[];
 
   @Column()
   @Index()
-  tags: string[];
+  tags?: string[];
 
   @Column()
   @Index()
-  colors: string[];
+  colors?: string[];
 }
 
 @Entity('wallpapers')
