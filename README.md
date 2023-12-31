@@ -71,3 +71,75 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Playground
+
+```
+
+yarn repl
+
+openAIService = await get(OpenAIService).createWallpaperGeneratingPrompt()
+
+{
+  prompt: 'Create a vibrant, surreal landscape at twilight, with rolling hills covered in emerald green and indigo flowers under a sky painted in gradients of violet, fuchsia, and rose. In the background, a majestic, teal-colored waterfall cascading into a serene pool adds a sense of motion, while fireflies with amber glow add dots of light to the scene. The art style should be a blend of impressionism and fantasy.',
+  styles: [ 'impressionism', 'fantasy' ],
+  tags: [
+    'vibrant',   'surreal',
+    'landscape', 'twilight',
+    'hills',     'flowers',
+    'sky',       'gradient',
+    'waterfall', 'fireflies',
+    'serene',    'motion',
+    'light'
+  ],
+  colors: [
+    'emerald', 'indigo',
+    'violet',  'fuchsia',
+    'rose',    'teal',
+    'amber'
+  ]
+}
+
+
+await get(OpenAIService).generateWallpaper('Create a vibrant, surreal landscape at twilight, with rolling hills covered in emerald green and indigo flowers under a sky painted in gradients of violet, fuchsia, and rose. In the background, a majestic, teal-colored waterfall cascading into a serene pool adds a sense of motion, while fireflies with amber glow add dots of light to the scene. The art style should be a blend of impressionism and fantasy.')
+
+await get(ReplicateService).upscale('https://oaidalleapiprodscus.blob.core.windows.net/private/org-eTyw7kmLu5hbd57Usik1ap7q/user-PzvCJnigMUoZBOaOFetrviQ8/img-gXeGaRKwzYNvOv26wqvnd3s7.png?st=2023-12-31T05%3A24%3A20Z&se=2023-12-31T07%3A24%3A20Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-12-30T18%3A30%3A33Z&ske=2023-12-31T18%3A30%3A33Z&sks=b&skv=2021-08-06&sig=vX/2T5jlFxx47SMcTnS2fGAfBfbYtyKRPzruOeFch4k%3D')
+
+
+await get(GenerateWallpaperScheduler).insertWallpaperIntoDatabase({
+input: {
+      engine: 'dall-e',
+      prompt:
+        'Create a vibrant, surreal landscape at twilight, with rolling hills covered in emerald green and indigo flowers under a sky painted in gradients of violet, fuchsia, and rose. In the background, a majestic, teal-colored waterfall cascading into a serene pool adds a sense of motion, while fireflies with amber glow add dots of light to the scene. The art style should be a blend of impressionism and fantasy.',
+      styles: ['impressionism', 'fantasy'],
+      tags: [
+        'vibrant',
+        'surreal',
+        'landscape',
+        'twilight',
+        'hills',
+        'flowers',
+        'sky',
+        'gradient',
+        'waterfall',
+        'fireflies',
+        'serene',
+        'motion',
+        'light',
+      ],
+      colors: [
+        'emerald',
+        'indigo',
+        'violet',
+        'fuchsia',
+        'rose',
+        'teal',
+        'amber',
+      ],
+    },
+    objectKey: 'FAKE_OBJECT_KEY',
+    imageKey: 'FAKE_IMAGE_KEY',
+})
+
+await get(GenerateWallpaperScheduler).generateWallpaper()
+```

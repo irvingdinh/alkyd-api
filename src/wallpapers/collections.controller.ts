@@ -52,7 +52,7 @@ export class CollectionsController {
     for (const entity of entities) {
       // TODO: Get the fuck of this one!
       const numberOfWallpapers = await this.wallpapersRepository.countBy({
-        collectionId: entity.id.toHexString(),
+        // collectionId: entity.id.toHexString(),
       });
 
       records.push({
@@ -87,7 +87,7 @@ export class CollectionsController {
 
     const wallpapers = await this.wallpapersRepository.find({
       where: {
-        collectionId: collection.id.toHexString(),
+        // collectionId: collection.id.toHexString(),
       },
       order: {
         createdAt: 'DESC',

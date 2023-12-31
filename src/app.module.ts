@@ -9,6 +9,7 @@ import {
   ConfigModuleOptions,
   ConfigService,
 } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import {
   TypeOrmModule,
   TypeOrmModuleAsyncOptions,
@@ -51,6 +52,12 @@ const configModuleOptions: ConfigModuleOptions = {
     R2_SECRET_ACCESS_KEY: Joi.string().required(),
     R2_ENDPOINT: Joi.string().required(),
     R2_BUCKET: Joi.string().required(),
+    OPENAI_API_TOKEN: Joi.string().required(),
+    REPLICATE_API_TOKEN: Joi.string().required(),
+
+    // Critical schedulers
+    SCHEDULER_ENABLED: Joi.boolean().required(),
+    SCHEDULER_GENERATE_WALLPAPER_ENABLED: Joi.boolean().required(),
   }),
 };
 
@@ -72,6 +79,7 @@ const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
     CacheModule.registerAsync(cacheModuleOptions),
     ConfigModule.forRoot(configModuleOptions),
     LoggerModule.forRoot({}),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     CoreModule,
     NovaModule,

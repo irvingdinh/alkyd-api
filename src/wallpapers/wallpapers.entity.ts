@@ -32,14 +32,34 @@ export class CollectionEntity {
   updatedAt: Date;
 }
 
+class WallpaperInput {
+  @Column()
+  @Index()
+  engine: string;
+
+  @Column()
+  prompt: string;
+
+  @Column()
+  @Index()
+  styles: string[];
+
+  @Column()
+  @Index()
+  tags: string[];
+
+  @Column()
+  @Index()
+  colors: string[];
+}
+
 @Entity('wallpapers')
 export class WallpaperEntity {
   @ObjectIdColumn()
   id: ObjectId;
 
-  @Index()
-  @Column()
-  collectionId: string;
+  @Column(() => WallpaperInput)
+  input: WallpaperInput;
 
   @Column()
   objectKey: string;

@@ -238,7 +238,7 @@ export class NovaService {
   async serializeWallpaperEntity(wallpaper: WallpaperEntity): Promise<any> {
     return {
       id: wallpaper.id.toHexString(),
-      collectionId: wallpaper.collectionId,
+      // collectionId: wallpaper.collectionId,
       objectKey: wallpaper.objectKey,
       objectUrl: await this.storageService.getSignedUrl(wallpaper.objectKey),
       imageKey: wallpaper.imageKey,
