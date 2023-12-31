@@ -14,9 +14,9 @@ export class ImagesService {
     private readonly log: PinoLogger,
     private readonly configService: ConfigService,
   ) {
-    this.IMAGES_ACCOUNT_ID = configService.get('IMAGES_ACCOUNT_ID');
-    this.IMAGES_ACCOUNT_HASH = configService.get('IMAGES_ACCOUNT_HASH');
-    this.IMAGES_API_TOKEN = configService.get('IMAGES_API_TOKEN');
+    this.IMAGES_ACCOUNT_ID = this.configService.get('IMAGES_ACCOUNT_ID');
+    this.IMAGES_ACCOUNT_HASH = this.configService.get('IMAGES_ACCOUNT_HASH');
+    this.IMAGES_API_TOKEN = this.configService.get('IMAGES_API_TOKEN');
   }
 
   async put(
@@ -41,7 +41,7 @@ export class ImagesService {
       );
     } catch (error) {
       this.log.error(
-        { error: error.stack, url, metadata },
+        { error: error.stack, payload: { metadata, url } },
         `axios.post returns error: ${error.message}`,
       );
       throw error;
@@ -89,7 +89,7 @@ export class ImagesService {
       );
     } catch (error) {
       this.log.error(
-        { error: error.stack, metadata },
+        { error: error.stack, payload: { metadata } },
         `axios.post returns error: ${error.message}`,
       );
       throw error;

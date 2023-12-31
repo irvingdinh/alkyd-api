@@ -42,6 +42,27 @@ export class NovaService {
     return decodedIdToken.uid;
   }
 
+  async authorizeThenValidate(
+    req: Request,
+    res: Response,
+    schema?: ObjectSchema,
+  ): Promise<{ userId: string; value: any } | null> {
+    const userId = await this.authorize(req, res);
+    if (typeof userId !== 'string') {
+      return null;
+    }
+
+    const { value, error } = schema.validate(req.body);
+    if (error) {
+      res
+        .status(HttpStatus.UNPROCESSABLE_ENTITY)
+        .json({ message: error.message });
+      return null;
+    }
+
+    return { userId, value };
+  }
+
   async handleStoreEndpoint<T>({
     req,
     res,

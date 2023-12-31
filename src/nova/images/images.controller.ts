@@ -1,39 +1,40 @@
 import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { Repository } from 'typeorm';
 
 import { ImagesService } from '../../core/external/images.service';
 import { StorageService } from '../../core/external/storage.service';
 import { NovaService } from '../nova.service';
+import { ImageEntity } from './images.entity';
+import { NovaImagesService } from './nova-images.service';
 
 @Controller('/api/v1/nova/images')
 export class ImagesController {
   constructor(
     @InjectPinoLogger(ImagesController.name)
     private readonly log: PinoLogger,
+    @InjectRepository(ImageEntity)
+    private readonly imagesRepository: Repository<ImageEntity>,
     private readonly imagesService: ImagesService,
     private readonly novaService: NovaService,
+    private readonly novaImagesService: NovaImagesService,
     private readonly storageService: StorageService,
   ) {}
 
   @Post()
   async store(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const userId = await this.novaService.authorize(req, res);
-    if (typeof userId !== 'string') {
-      return null;
-    }
-
-    const schema = Joi.object({
-      fileName: Joi.string().required(),
-    });
-
-    const { value, error } = schema.validate(req.body);
-    if (error) {
-      res
-        .status(HttpStatus.UNPROCESSABLE_ENTITY)
-        .json({ message: error.message });
-      return null;
+    const { userId, value } = await this.novaService.authorizeThenValidate(
+      req,
+      res,
+      Joi.object({
+        fileName: Joi.string().required(),
+      }),
+    );
+    if (!userId || !value) {
+      return;
     }
 
     const { key, putSignedUrl } = await this.storageService.putSignedUrl(
@@ -48,45 +49,50 @@ export class ImagesController {
 
   @Post('/activate')
   async activate(@Req() req: Request, @Res() res: Response) {
-    const userId = await this.novaService.authorize(req, res);
-    if (typeof userId !== 'string') {
-      return null;
-    }
-
-    const schema = Joi.object({
-      key: Joi.string().required(),
-    });
-
-    const { value, error } = schema.validate(req.body);
-    if (error) {
-      res
-        .status(HttpStatus.UNPROCESSABLE_ENTITY)
-        .json({ message: error.message });
-      return null;
-    }
-
-    const signedUrl = await this.storageService.getSignedUrl(value.key);
-
-    let imageKey: string;
-    try {
-      const result = await this.imagesService.put(signedUrl);
-
-      imageKey = result.id;
-    } catch (error) {
-      this.log.error(
-        { error: error.stack },
-        `ImagesService.put returns error: ${error.message}`,
-      );
-
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+    const { userId, value } = await this.novaService.authorizeThenValidate(
+      req,
+      res,
+      Joi.object({
+        key: Joi.string().required(),
+      }),
+    );
+    if (!userId || !value) {
       return;
     }
+
+    const imageKey = await this.novaImagesService.uploadImageToCloudflareImages(
+      value.key,
+    );
+
+    const { width, height } =
+      await this.novaImagesService.upscaleImageThenOverwrite(value.key);
+
+    await this.imagesRepository.save({
+      objectKey: value.key,
+      imageKey: imageKey,
+      width: width,
+      height: height,
+    });
 
     res.status(HttpStatus.OK).json({
       imageKey: imageKey,
       imageUrl: this.imagesService.getUrl(imageKey, 'public'),
       objectKey: value.key,
-      objectSignedUrl: signedUrl,
+      objectSignedUrl: await this.storageService.getSignedUrl(value.key),
     });
+  }
+
+  @Post('/find')
+  async find(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const entities = await this.novaService.handleFindEndpoint({
+      req,
+      res,
+      repository: this.imagesRepository,
+    });
+    if (entities === null) {
+      return;
+    }
+
+    res.status(HttpStatus.OK).json(entities);
   }
 }

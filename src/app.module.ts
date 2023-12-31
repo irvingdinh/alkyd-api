@@ -21,6 +21,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
+import { ImageEntity } from './nova/images/images.entity';
 import { NovaModule } from './nova/nova.module';
 import {
   CollectionEntity,
@@ -54,10 +55,6 @@ const configModuleOptions: ConfigModuleOptions = {
     R2_BUCKET: Joi.string().required(),
     OPENAI_API_TOKEN: Joi.string().required(),
     REPLICATE_API_TOKEN: Joi.string().required(),
-
-    // Critical schedulers
-    SCHEDULER_ENABLED: Joi.boolean().required(),
-    SCHEDULER_GENERATE_WALLPAPER_ENABLED: Joi.boolean().required(),
   }),
 };
 
@@ -67,7 +64,7 @@ const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
     return {
       type: 'mongodb',
       url: configService.get<string>('DATABASE_URL'),
-      entities: [CollectionEntity, WallpaperEntity],
+      entities: [ImageEntity, CollectionEntity, WallpaperEntity],
       synchronize: true,
     };
   },
