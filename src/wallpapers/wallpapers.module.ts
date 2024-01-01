@@ -4,12 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreModule } from '../core/core.module';
 import { AnonymousService } from './anonymous.service';
 import { CollectionsController } from './collections.controller';
-import { GenerateWallpaperScheduler } from './schedulers/generate-wallpaper.scheduler';
 import { WallpapersController } from './wallpapers.controller';
 import { CollectionEntity, WallpaperEntity } from './wallpapers.entity';
 import { WallpapersService } from './wallpapers.service';
-
-const schedulers = [GenerateWallpaperScheduler];
 
 @Module({
   imports: [
@@ -17,6 +14,6 @@ const schedulers = [GenerateWallpaperScheduler];
     CoreModule,
   ],
   controllers: [CollectionsController, WallpapersController],
-  providers: [AnonymousService, WallpapersService, ...schedulers],
+  providers: [AnonymousService, WallpapersService],
 })
 export class WallpapersModule {}

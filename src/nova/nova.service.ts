@@ -42,11 +42,15 @@ export class NovaService {
     return decodedIdToken.uid;
   }
 
-  async authorizeThenValidate(
-    req: Request,
-    res: Response,
-    schema?: ObjectSchema,
-  ): Promise<{ userId: string; value: any } | null> {
+  async authorizeThenValidate({
+    req,
+    res,
+    schema,
+  }: {
+    req: Request;
+    res: Response;
+    schema: ObjectSchema;
+  }): Promise<{ userId: string; value: any } | null> {
     const userId = await this.authorize(req, res);
     if (typeof userId !== 'string') {
       return null;

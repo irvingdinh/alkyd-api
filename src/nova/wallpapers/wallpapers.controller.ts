@@ -25,7 +25,6 @@ export class WallpapersController {
       res,
       repository: this.wallpaperRepository,
       schema: Joi.object({
-        collectionId: Joi.string().required(),
         objectKey: Joi.string().required(),
         imageKey: Joi.string().required(),
       }),

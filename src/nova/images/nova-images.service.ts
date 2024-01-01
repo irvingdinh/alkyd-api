@@ -18,7 +18,7 @@ export class NovaImagesService {
     private readonly storageService: StorageService,
   ) {}
 
-  async uploadImageToCloudflareImages(objectKey: string): Promise<string> {
+  async syncImage(objectKey: string): Promise<string> {
     let signedUrl: string;
     try {
       signedUrl = await this.storageService.getSignedUrl(objectKey);

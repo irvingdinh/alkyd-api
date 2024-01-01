@@ -21,7 +21,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
-import { ImageEntity } from './nova/images/images.entity';
+import { ImageEntity } from './nova/images/nova-images.entity';
 import { NovaModule } from './nova/nova.module';
 import {
   CollectionEntity,

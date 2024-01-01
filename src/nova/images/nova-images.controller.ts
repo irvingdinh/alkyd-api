@@ -8,13 +8,13 @@ import { Repository } from 'typeorm';
 import { ImagesService } from '../../core/external/images.service';
 import { StorageService } from '../../core/external/storage.service';
 import { NovaService } from '../nova.service';
-import { ImageEntity } from './images.entity';
+import { ImageEntity } from './nova-images.entity';
 import { NovaImagesService } from './nova-images.service';
 
 @Controller('/api/v1/nova/images')
-export class ImagesController {
+export class NovaImagesController {
   constructor(
-    @InjectPinoLogger(ImagesController.name)
+    @InjectPinoLogger(NovaImagesController.name)
     private readonly log: PinoLogger,
     @InjectRepository(ImageEntity)
     private readonly imagesRepository: Repository<ImageEntity>,
@@ -26,13 +26,13 @@ export class ImagesController {
 
   @Post()
   async store(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const { userId, value } = await this.novaService.authorizeThenValidate(
+    const { userId, value } = await this.novaService.authorizeThenValidate({
       req,
       res,
-      Joi.object({
+      schema: Joi.object({
         fileName: Joi.string().required(),
       }),
-    );
+    });
     if (!userId || !value) {
       return;
     }
@@ -49,20 +49,18 @@ export class ImagesController {
 
   @Post('/activate')
   async activate(@Req() req: Request, @Res() res: Response) {
-    const { userId, value } = await this.novaService.authorizeThenValidate(
+    const { userId, value } = await this.novaService.authorizeThenValidate({
       req,
       res,
-      Joi.object({
+      schema: Joi.object({
         key: Joi.string().required(),
       }),
-    );
+    });
     if (!userId || !value) {
       return;
     }
 
-    const imageKey = await this.novaImagesService.uploadImageToCloudflareImages(
-      value.key,
-    );
+    const imageKey = await this.novaImagesService.syncImage(value.key);
 
     const { width, height } =
       await this.novaImagesService.upscaleImageThenOverwrite(value.key);
