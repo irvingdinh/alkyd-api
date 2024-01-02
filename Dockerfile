@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package*.json ./
 
 RUN yarn install --frozen-lockfile
+RUN yarn add sharp --ignore-engines
 
 COPY --chown=node:node . .
 
@@ -15,9 +16,7 @@ FROM node:alpine AS builder
 WORKDIR /usr/src/app
 
 COPY --chown=node:node package*.json ./
-
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
 COPY --chown=node:node . .
 
 RUN yarn build
