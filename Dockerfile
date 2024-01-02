@@ -22,7 +22,9 @@ RUN yarn build
 
 ENV NODE_ENV production
 
-RUN yarn install --frozen-lockfile --production && yarn cache clean --force
+RUN yarn install --frozen-lockfile --production
+RUN yarn add sharp --ignore-engines
+RUN yarn cache clean --force
 
 USER node
 
@@ -30,7 +32,5 @@ FROM node:alpine
 
 COPY --chown=node:node --from=builder /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /usr/src/app/dist ./dist
-
-RUN yarn add sharp --ignore-engines
 
 CMD [ "node", "dist/main.js" ]
