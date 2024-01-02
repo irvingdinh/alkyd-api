@@ -1,4 +1,4 @@
-FROM node:alpine AS development
+FROM node:slim AS development
 
 WORKDIR /usr/src/app
 
@@ -10,7 +10,7 @@ COPY --chown=node:node . .
 
 USER node
 
-FROM node:alpine AS builder
+FROM node:slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -22,13 +22,11 @@ RUN yarn build
 
 ENV NODE_ENV production
 
-RUN yarn install --frozen-lockfile --production
-RUN yarn add sharp --ignore-engines
-RUN yarn cache clean --force
+RUN yarn install --frozen-lockfile --production && yarn cache clean --force
 
 USER node
 
-FROM node:alpine
+FROM node:slim
 
 COPY --chown=node:node --from=builder /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /usr/src/app/dist ./dist
