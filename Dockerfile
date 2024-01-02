@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package*.json ./
 
 RUN yarn install --frozen-lockfile
-RUN yarn add sharp --ignore-engines
 
 COPY --chown=node:node . .
 
@@ -31,5 +30,7 @@ FROM node:alpine
 
 COPY --chown=node:node --from=builder /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /usr/src/app/dist ./dist
+
+RUN yarn add sharp --ignore-engines
 
 CMD [ "node", "dist/main.js" ]
